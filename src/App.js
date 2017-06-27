@@ -13,40 +13,29 @@ class App extends Component {
     this.state = {
       tableData: [
         {
-          name: 'John Smith',
-          status: 'Employed',
-        },
-        {
-          name: 'Randal White',
-          status: 'Unemployed',
-        },
-        {
-          name: 'Stephanie Sanders',
-          status: 'Employed',
-        },
-        {
-          name: 'Steve Brown',
-          status: 'Employed',
-        },
-        {
-          name: 'Joyce Whitten',
-          status: 'Employed',
-        },
-        {
-          name: 'Samuel Roberts',
-          status: 'Employed',
-        },
-        {
-          name: 'Adam Moore',
-          status: 'Employed',
-        },
+          people: '5',
+          employmentSupports: '5 | 50',
+          energySupports: '3 | 30',
+          water: '40',
+          land: '30',
+          energy: '50',
+          waterBefore: '40',
+          waterAfter: '30',
+          landBefore: '30',
+          landAfter: '20',
+          energyBefore: '50',
+          energyAfter: '60',
+          popIncrease: '3',
+          death: 'yes',
+          pop: '10'
+        }
       ]
     };
   }
   render() {
     return (
       <MuiThemeProvider>
-        
+
         <GenerationTable tableData={this.state.tableData} />
       </MuiThemeProvider>
     );

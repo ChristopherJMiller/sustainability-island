@@ -100,8 +100,21 @@ export default class GenerationTable extends Component {
             {this.props.tableData.map( (row, index) => (
               <TableRow key={index}>
                 <TableRowColumn>{index}</TableRowColumn>
-                <TableRowColumn>{row.name}</TableRowColumn>
-                <TableRowColumn>{row.status}</TableRowColumn>
+                <TableRowColumn>{row.people}</TableRowColumn>
+                <TableRowColumn>{row.employmentSupports}</TableRowColumn>
+                <TableRowColumn>{row.energySupports}</TableRowColumn>
+                <TableRowColumn>{row.water}</TableRowColumn>
+                <TableRowColumn>{row.land}</TableRowColumn>
+                <TableRowColumn>{row.energy}</TableRowColumn>
+                <TableRowColumn>{row.waterBefore}</TableRowColumn>
+                <TableRowColumn>{row.waterAfter}</TableRowColumn>
+                <TableRowColumn>{row.landBefore}</TableRowColumn>
+                <TableRowColumn>{row.landAfter}</TableRowColumn>
+                <TableRowColumn>{row.energyBefore}</TableRowColumn>
+                <TableRowColumn>{row.energyAfter}</TableRowColumn>
+                <TableRowColumn>{row.popIncrease}</TableRowColumn>
+                <TableRowColumn>{row.death}</TableRowColumn>
+                <TableRowColumn>{row.pop}</TableRowColumn>
               </TableRow>
               ))}
           </TableBody>
