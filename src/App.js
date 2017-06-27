@@ -11,6 +11,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      generation: 1,
       tableData: [
         {
           people: '5',
@@ -31,13 +32,24 @@ class App extends Component {
         }
       ]
     };
+
+    this.setGeneration = (generation, data) => {
+      let oldTableData = this.state.tableData;
+      oldTableData[generation - 1] = data;
+      this.setState({
+        tableData: oldTableData
+      });
+    }
   }
+
   render() {
     return (
-      <MuiThemeProvider>
-
-        <GenerationTable tableData={this.state.tableData} />
-      </MuiThemeProvider>
+      <div>
+        <h1>Generation {this.state.generation}</h1>
+        <MuiThemeProvider>
+          <GenerationTable tableData={this.state.tableData} />
+        </MuiThemeProvider>
+      </div>
     );
   }
 }
