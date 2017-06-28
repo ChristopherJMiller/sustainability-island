@@ -57,6 +57,8 @@ class App extends Component {
     this.updateWorkers = this.updateWorkers.bind(this);
     this.nextGeneration = this.nextGeneration.bind(this);
 
+    this.canProgress = this.canProgress.bind(this);
+
     this.oldPop = 0;
   }
 
@@ -143,21 +145,21 @@ class App extends Component {
 
     genData.water += (genData.people + foodSupplySupport + this.state.energyTypes.coal + Math.floor(this.state.energyTypes.hydro / 2) + this.state.energyTypes.nuclear) - 2;
 
-    if (document.getElementById('conserveWater').value == "true") {
+    if (document.getElementById('conserveWater').checked) {
       genData.water += 1;
       genData.energy -= 1;
     }
 
     genData.land += ((foodSupplySupport * 2) + (this.state.energyTypes.coal * 2) + this.state.energyTypes.hydro + this.state.energyTypes.nuclear + (this.state.laborForce.industry * 2) + this.state.laborForce.service + this.state.laborForce.farm) - 2;
 
-    if (document.getElementById('conserveSoil').value == "true") {
+    if (document.getElementById('conserveSoil').checked) {
       genData.land += 1;
       genData.energy -= 1;
     }
 
     genData.energy += this.state.energyTypes.alternate;
 
-    if (document.getElementById('conserveEnergy').value == "true") {
+    if (document.getElementById('conserveEnergy').checked) {
       genData.energy += 2;
       usedEnergyToken = true
     }
@@ -198,10 +200,33 @@ class App extends Component {
       generation: this.state.generation + 1,
       energyConservationUses: usedEnergyToken ? this.state.energyConservationUses - 1 : this.state.energyConservationUses
     });
-    console.log(this.state.tableData[this.state.generation - 1])
+  }
+
+  canProgress() {
+    if (this.state.laborForce.farm == 0)
+      return false;
+
+    if (document.getElementById('coal') != null) {
+      if (((Number(document.getElementById('coal').value) * 10) + (Number(document.getElementById('hydro').value) * 5) + (Number(document.getElementById('nuclear').value) * 10) + (Number(document.getElementById('alternate').value) * 4)) < this.state.tableData[this.state.generation - 1].people)
+        return false;
+    }
+
+    if (document.getElementById('industry') != null) {
+      if ((Number(document.getElementById('industry').value) * 10) + (Number(document.getElementById('service').value) * 10) + (Number(document.getElementById('farm').value) * 4) < this.requiredWorkers())
+        return false;
+    }
+
+    return true;
   }
 
   render() {
+    let button = null;
+    if (this.canProgress()) {
+      button = <RaisedButton label="Next Generation" fullWidth={true} onTouchTap={this.nextGeneration} />;
+    } else {
+      button = <RaisedButton label="Missing Requirements" fullWidth={true} disabled={true} />;
+    }
+
     return (
       <div>
         <MuiThemeProvider>
@@ -225,7 +250,7 @@ class App extends Component {
               <Checkbox label="Implement Water Conservation" id="conserveWater" />
               <Checkbox label="Implement Soil Conservation" id="conserveSoil" />
               <Checkbox label={"Implement Energy Conservation (" + this.state.energyConservationUses + " left)"} id="conserveEnergy" />
-              <RaisedButton label="Next Generation" fullWidth={true} onTouchTap={this.nextGeneration} />
+              { button }
             </CardText>
           </Card>
         </MuiThemeProvider>
