@@ -80,8 +80,17 @@ class App extends Component {
           <Card>
             <CardHeader title={"Generation " + this.state.generation} />
             <CardText>
+              <h4>Energy Sources</h4>
+              <UserInput hint="Coal Fired" />
+              <UserInput hint="Hydroelectric" />
+              <UserInput hint="Nuclear" />
+              <UserInput hint="Alernative Energy" />
+
+              <h4>Work Force</h4>
               Workers Remaining: {this.state.tableData[this.state.generation - 1].people - this.totalWorkers()}<br />
-              <UserInput hint="text" />
+              <UserInput hint="Industrial" />
+              <UserInput hint="Service" />
+              <UserInput hint="Farmers" />
             </CardText>
           </Card>
         </MuiThemeProvider>
