@@ -12,25 +12,18 @@ class App extends Component {
     super(props);
     this.state = {
       generation: 1,
-      tableData: [
-        {
-          people: '5',
-          employmentSupports: '5 | 50',
-          energySupports: '3 | 30',
-          water: '40',
-          land: '30',
-          energy: '50',
-          waterBefore: '40',
-          waterAfter: '30',
-          landBefore: '30',
-          landAfter: '20',
-          energyBefore: '50',
-          energyAfter: '60',
-          popIncrease: '3',
-          death: 'yes',
-          pop: '10'
-        }
-      ]
+      tableData: [],
+      energyTypes: {
+        coal: 0,
+        hydro: 0,
+        nuclear: 0,
+        alternative: 0
+      },
+      laborForce: {
+        industry: 0,
+        service: 0,
+        farmers: 0
+      }
     };
 
     this.setGeneration = (generation, data) => {
@@ -40,15 +33,38 @@ class App extends Component {
         tableData: oldTableData
       });
     }
+
+
+    //Set up beginning of first generation
+    this.setGeneration(
+      1,
+      {
+        people: '4',
+        employmentSupports: '',
+        energySupports: '',
+        water: '70',
+        land: '40',
+        energy: '40',
+        waterBefore: '',
+        waterAfter: '',
+        landBefore: '',
+        landAfter: '',
+        energyBefore: '',
+        energyAfter: '',
+        popIncrease: '',
+        death: '',
+        pop: ''
+      });
   }
 
   render() {
     return (
       <div>
-        <h1>Generation {this.state.generation}</h1>
         <MuiThemeProvider>
           <GenerationTable tableData={this.state.tableData} />
         </MuiThemeProvider>
+        <h1>Generation {this.state.generation}</h1>
+        
       </div>
     );
   }

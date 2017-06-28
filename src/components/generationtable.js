@@ -98,8 +98,8 @@ export default class GenerationTable extends Component {
             stripedRows={this.state.stripedRows}
           >
             {this.props.tableData.map( (row, index) => (
-              <TableRow key={index}>
-                <TableRowColumn>{index}</TableRowColumn>
+              <TableRow key={index + 1}>
+                <TableRowColumn>{index + 1}</TableRowColumn>
                 <TableRowColumn>{row.people}</TableRowColumn>
                 <TableRowColumn>{row.employmentSupports}</TableRowColumn>
                 <TableRowColumn>{row.energySupports}</TableRowColumn>
