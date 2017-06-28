@@ -8,7 +8,7 @@ export default class GenerationTable extends Component {
 
   render() {
     return (
-      <TextField hintText={this.props.hint} errorText={this.props.errors} onChange={this.props.onChange} />
+      <TextField id={this.props.id} hintText={this.props.hint} errorText={this.props.errors} onChange={this.props.onChange} type="number" />
     );
   }
 }
