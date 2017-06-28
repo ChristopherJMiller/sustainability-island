@@ -51,6 +51,7 @@ class App extends Component {
     }
 
     this.updateEnergy = this.updateEnergy.bind(this);
+    this.updateWorkers = this.updateWorkers.bind(this);
   }
 
   componentDidMount() {
@@ -83,10 +84,25 @@ class App extends Component {
     this.setGeneration(this.state.generation, oldGenData);
     this.setState({
         energyTypes: {
-          coal: document.getElementById('coal').value,
-          hydro: document.getElementById('hydro').value,
-          nuclear: document.getElementById('nuclear').value,
-          alternate: document.getElementById('alternate').value
+          coal: Number(document.getElementById('coal').value),
+          hydro: Number(document.getElementById('hydro').value),
+          nuclear: Number(document.getElementById('nuclear').value),
+          alternate: Number(document.getElementById('alternate').value)
+        }
+    });
+  }
+
+  updateWorkers() {
+    let oldGenData = this.state.tableData[this.state.generation - 1];
+    const totalOperations = Number(document.getElementById('industry').value) + Number(document.getElementById('service').value) + Number(document.getElementById('farm').value);
+    const totalSupports = (Number(document.getElementById('industry').value) * 10) + (Number(document.getElementById('service').value) * 10) + (Number(document.getElementById('farm').value) * 4);
+    oldGenData.employmentSupports =  totalOperations + " | " + totalSupports;
+    this.setGeneration(this.state.generation, oldGenData);
+    this.setState({
+        laborForce: {
+          industry: Number(document.getElementById('industry').value),
+          service: Number(document.getElementById('service').value),
+          farm: Number(document.getElementById('farm').value),
         }
     });
   }
@@ -108,12 +124,15 @@ class App extends Component {
               <UserInput id="alternate" hint="Alernative Energy Plants" onChange={this.updateEnergy} />
 
               <h4>Work Operations</h4>
-              Workers Remaining: {this.state.tableData[this.state.generation - 1].people - this.totalWorkers()} | { this.requiredWorkers() } must be employed<br />
-              <UserInput hint="Industrial Factories" />
-              <UserInput hint="Service Companies" />
-              <UserInput hint="Farming Operations" />
+              { this.requiredWorkers() } must be employed<br />
+              <UserInput id="industry" hint="Industrial Factories" onChange={this.updateWorkers} />
+              <UserInput id="service" hint="Service Companies" onChange={this.updateWorkers} />
+              <UserInput id="farm" hint="Farming Operations" onChange={this.updateWorkers} />
             </CardText>
           </Card>
+        </MuiThemeProvider>
+        <MuiThemeProvider>
+          <RaisedButton label="Next Generation" fullWidth={true} />
         </MuiThemeProvider>
       </div>
     );
