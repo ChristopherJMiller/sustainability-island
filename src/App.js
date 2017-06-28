@@ -7,6 +7,8 @@ import UserInput from './components/UserInput';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import {Card, CardHeader, CardText} from 'material-ui/Card';
+import Checkbox from 'material-ui/Checkbox';
+
 
 
 class App extends Component {
@@ -30,7 +32,8 @@ class App extends Component {
         industry: 0,
         service: 0,
         farmers: 0
-      }
+      },
+      energyConservationUses: 3
     };
 
     this.setGeneration = (generation, data) => {
@@ -52,6 +55,9 @@ class App extends Component {
 
     this.updateEnergy = this.updateEnergy.bind(this);
     this.updateWorkers = this.updateWorkers.bind(this);
+    this.nextGeneration = this.nextGeneration.bind(this);
+
+    this.oldPop = 0;
   }
 
   componentDidMount() {
@@ -107,6 +113,94 @@ class App extends Component {
     });
   }
 
+  nextGeneration() {
+    let genData = this.state.tableData[this.state.generation - 1];
+    this.state.energyTypes = this.state.energyTypes;
+    this.state.laborForce = this.state.laborForce;
+    let foodSupplySupport = Math.ceil(genData.people / 10);
+    let usedEnergyToken = false;
+
+    genData.water -= genData.people + foodSupplySupport + this.state.energyTypes.coal + Math.floor(this.state.energyTypes.hydro / 2) + this.state.energyTypes.nuclear;
+    genData.land -= (foodSupplySupport * 2) + (this.state.energyTypes.coal * 2) + this.state.energyTypes.hydro + this.state.energyTypes.nuclear + (this.state.laborForce.industry * 2) + this.state.laborForce.service + this.state.laborForce.farm;
+    genData.energy -= this.state.energyTypes.coal + this.state.energyTypes.hydro + this.state.energyTypes.nuclear + Math.floor(this.state.energyTypes.alternate / 3) + this.state.laborForce.industry + this.state.laborForce.service + this.state.laborForce.farm + Math.floor(genData.people / 20);
+
+    if ((genData.people - this.oldPop) > 0) {
+      genData.land -= Math.floor((genData.people - this.oldPop) / 20);
+    }
+
+    if (this.state.generation % 4 == 0) {
+      genData.land -= this.state.laborForce.farm;
+    }
+
+    if (this.state.generation == 5) {
+      genData.land -= Math.floor(genData.people / 20);
+    }
+
+    //Redemption
+    genData.waterBefore = genData.water;
+    genData.landBefore = genData.land;
+    genData.energyBefore = genData.energy;
+
+    genData.water += (genData.people + foodSupplySupport + this.state.energyTypes.coal + Math.floor(this.state.energyTypes.hydro / 2) + this.state.energyTypes.nuclear) - 2;
+
+    if (document.getElementById('conserveWater').value == "true") {
+      genData.water += 1;
+      genData.energy -= 1;
+    }
+
+    genData.land += ((foodSupplySupport * 2) + (this.state.energyTypes.coal * 2) + this.state.energyTypes.hydro + this.state.energyTypes.nuclear + (this.state.laborForce.industry * 2) + this.state.laborForce.service + this.state.laborForce.farm) - 2;
+
+    if (document.getElementById('conserveSoil').value == "true") {
+      genData.land += 1;
+      genData.energy -= 1;
+    }
+
+    genData.energy += this.state.energyTypes.alternate;
+
+    if (document.getElementById('conserveEnergy').value == "true") {
+      genData.energy += 2;
+      usedEnergyToken = true
+    }
+
+    genData.waterAfter = genData.water;
+    genData.landAfter = genData.land;
+    genData.energyAfter = genData.energy;
+
+    //Population
+    let newPop = genData.people + Math.round(genData.people * 1.75);
+    genData.popIncrease =  Math.round(genData.people * 1.75);
+    genData.death =  Math.round(newPop / 5);
+    newPop = newPop - Math.round(newPop / 5);
+    genData.pop = newPop;
+
+    this.setGeneration(this.state.generation, genData);
+
+    let newGen = {
+            people: Number(genData.pop),
+            employmentSupports: genData.employmentSupports,
+            energySupports: genData.energySupports,
+            water: Number(genData.water),
+            land: Number(genData.land),
+            energy: Number(genData.energy),
+            waterBefore: '',
+            waterAfter: '',
+            landBefore: '',
+            landAfter: '',
+            energyBefore: '',
+            energyAfter: '',
+            popIncrease: '',
+            death: '',
+            pop: ''
+          };
+    this.setGeneration(this.state.generation + 1, newGen);
+
+    this.setState({
+      generation: this.state.generation + 1,
+      energyConservationUses: usedEnergyToken ? this.state.energyConservationUses - 1 : this.state.energyConservationUses
+    });
+    console.log(this.state.tableData[this.state.generation - 1])
+  }
+
   render() {
     return (
       <div>
@@ -128,11 +222,12 @@ class App extends Component {
               <UserInput id="industry" hint="Industrial Factories" onChange={this.updateWorkers} />
               <UserInput id="service" hint="Service Companies" onChange={this.updateWorkers} />
               <UserInput id="farm" hint="Farming Operations" onChange={this.updateWorkers} />
+              <Checkbox label="Implement Water Conservation" id="conserveWater" />
+              <Checkbox label="Implement Soil Conservation" id="conserveSoil" />
+              <Checkbox label={"Implement Energy Conservation (" + this.state.energyConservationUses + " left)"} id="conserveEnergy" />
+              <RaisedButton label="Next Generation" fullWidth={true} onTouchTap={this.nextGeneration} />
             </CardText>
           </Card>
-        </MuiThemeProvider>
-        <MuiThemeProvider>
-          <RaisedButton label="Next Generation" fullWidth={true} />
         </MuiThemeProvider>
       </div>
     );
