@@ -180,8 +180,8 @@ class App extends Component {
     let newPop = genData.people + Math.round(genData.people * this.state.birthMult);
     genData.popIncrease =  Math.round(genData.people * this.state.birthMult);
     genData.death =  Math.round(newPop / 5);
-    newPop = newPop - Math.round(newPop / 5);
-    genData.pop = newPop;
+    let finalPop = newPop - Math.round(newPop / 5);
+    genData.pop = finalPop;
 
     this.setGeneration(this.state.generation, genData, false);
 
