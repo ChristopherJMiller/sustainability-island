@@ -17,6 +17,9 @@ class App extends Component {
     super(props);
     this.state = {
       generation: 1,
+      stagnantPop: false,
+      birthMult: 1.75,
+      lost: false,
       tableData: [
         {
           people: 0
@@ -36,9 +39,14 @@ class App extends Component {
       energyConservationUses: 3
     };
 
-    this.setGeneration = (generation, data) => {
+    this.setGeneration = (generation, data, changeResources = true) => {
       let oldTableData = this.state.tableData;
       oldTableData[generation - 1] = data;
+      if (!changeResources) {
+        oldTableData[generation - 1].water = this.state.tableData[generation - 1].water;
+        oldTableData[generation - 1].energy = this.state.tableData[generation - 1].energy;
+        oldTableData[generation - 1].land = this.state.tableData[generation - 1].land;
+      }
       this.setState({
         tableData: oldTableData
       });
@@ -169,13 +177,13 @@ class App extends Component {
     genData.energyAfter = genData.energy;
 
     //Population
-    let newPop = genData.people + Math.round(genData.people * 1.75);
-    genData.popIncrease =  Math.round(genData.people * 1.75);
+    let newPop = genData.people + Math.round(genData.people * this.state.birthMult);
+    genData.popIncrease =  Math.round(genData.people * this.state.birthMult);
     genData.death =  Math.round(newPop / 5);
     newPop = newPop - Math.round(newPop / 5);
     genData.pop = newPop;
 
-    this.setGeneration(this.state.generation, genData);
+    this.setGeneration(this.state.generation, genData, false);
 
     let newGen = {
             people: Number(genData.pop),
@@ -196,13 +204,38 @@ class App extends Component {
           };
     this.setGeneration(this.state.generation + 1, newGen);
 
-    this.setState({
-      generation: this.state.generation + 1,
-      energyConservationUses: usedEnergyToken ? this.state.energyConservationUses - 1 : this.state.energyConservationUses
-    });
+    this.state.generation += 1;
+    this.state.energyConservationUses = usedEnergyToken ? this.state.energyConservationUses - 1 : this.state.energyConservationUses
+
+    if(this.state.tableData[this.state.generation - 1].water < 0 || this.state.tableData[this.state.generation - 1].land < 0 || this.state.tableData[this.state.generation - 1].energy < 0) {
+      this.setState({
+        lost: true
+      });
+    }
+
+    if (this.state.generation == 4) {
+      let dice = Math.random() * (6 - 1) + 1;
+      switch(dice) {
+        case 6:
+          this.setState({
+            stagnantPop: true
+          });
+        break;
+        case 3:
+          this.setState({
+            birthMult: 1.35
+          });
+        break;
+      }
+      this.nextGeneration();
+    }
+    this.render();
   }
 
   canProgress() {
+    if(this.state.lost)
+      return false;
+
     if (this.state.laborForce.farm == 0)
       return false;
 
