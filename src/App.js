@@ -61,6 +61,22 @@ class App extends Component {
       return Math.round(this.state.tableData[this.state.generation - 1].people * 0.75);
     }
 
+    this.energySupport = () => {
+      let result = (this.state.energyTypes.coal * 10) + (this.state.energyTypes.hydro * 5) + (this.state.energyTypes.nuclear * 10) + (this.state.energyTypes.alternate * 4);
+      if (isNaN(result))
+        return 0
+
+      return result;
+    }
+
+    this.workersSupport = () => {
+      let result = (this.state.laborForce.industry * 10) + (this.state.laborForce.service * 10) + (this.state.laborForce.farm * 4);
+      if (isNaN(result))
+        return 0
+
+      return result;
+    }
+
     this.updateEnergy = this.updateEnergy.bind(this);
     this.updateWorkers = this.updateWorkers.bind(this);
     this.nextGeneration = this.nextGeneration.bind(this);
@@ -270,13 +286,14 @@ class App extends Component {
             <CardHeader title={"Generation " + this.state.generation} />
             <CardText>
               <h4>Energy Sources</h4>
+              Supporting { this.energySupport() } out the required { this.state.tableData[this.state.generation - 1].people }.<br />
               <UserInput id="coal" hint="Coal Fired Plants" onChange={this.updateEnergy} />
               <UserInput id="hydro" hint="Hydroelectric Plants" onChange={this.updateEnergy} />
               <UserInput id="nuclear" hint="Nuclear Plants" onChange={this.updateEnergy} />
               <UserInput id="alternate" hint="Alernative Energy Plants" onChange={this.updateEnergy} />
 
               <h4>Work Operations</h4>
-              { this.requiredWorkers() } must be employed<br />
+              { this.workersSupport() } employed of required { this.requiredWorkers() }.<br />
               <UserInput id="industry" hint="Industrial Factories" onChange={this.updateWorkers} />
               <UserInput id="service" hint="Service Companies" onChange={this.updateWorkers} />
               <UserInput id="farm" hint="Farming Operations" onChange={this.updateWorkers} />
