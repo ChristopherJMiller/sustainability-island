@@ -1,7 +1,7 @@
 {
   "name": "sustainability-island",
   "version": "0.1.0",
-  "homepage": "http://chrismiller.xyz/sustainability-island",
+  "homepage": "http://chrismiller.xyz/sustainability-island/build",
   "private": true,
   "dependencies": {
     "react": "^15.6.1",
